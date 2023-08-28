@@ -1,5 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ChevronDown } from "lucide-react";
 import { Lesson } from "./Lesson";
+import * as Collapsible from "@radix-ui/react-collapsible";
+import { useAppSelector } from "../store";
+import { useDispatch } from "react-redux";
+import { play } from "../store/slices/player";
 
 interface ModulesProps {
   moduleIndex: number;
@@ -8,9 +13,16 @@ interface ModulesProps {
 }
 
 export function Module({ moduleIndex, title, amountOfLessons }: ModulesProps) {
+  // Redux state form player slice
+  const lessons = useAppSelector((state) => {
+    return state.player.course.module[moduleIndex].lessons;
+  });
+
+  const dispatch = useDispatch();
+
   return (
-    <div>
-      <button className="flex w-full items-center gap-3 bg-zinc-800 p-4 hover:bg-zinc-700 ">
+    <Collapsible.Root className="group">
+      <Collapsible.Trigger className="flex w-full items-center gap-3 bg-zinc-800 p-4 hover:bg-zinc-700 ">
         <div className="flex h-10 w-10 rounded-full items-center justify-center bg-zinc-950 text-xs">
           {moduleIndex}
         </div>
@@ -21,13 +33,25 @@ export function Module({ moduleIndex, title, amountOfLessons }: ModulesProps) {
             {amountOfLessons} classes
           </span>
         </div>
-        <ChevronDown className="h-5 w-4 ml-auto" />
-      </button>
-      <nav className=" relative flex flex-col gap-4 p-6">
-        <Lesson title="Redux Foundation" duration="9:13" />
-        <Lesson title="Redux Foundation" duration="9:13" />
-        <Lesson title="Redux Foundation" duration="9:13" />
-      </nav>
-    </div>
+        <ChevronDown className="h-5 w-4 ml-auto group-data-[state=open]:rotate-180 transition-transform" />
+      </Collapsible.Trigger>
+
+      <Collapsible.Content>
+        <nav className=" relative flex flex-col gap-4 p-6">
+          {lessons.map((lesson, lessonIndex) => {
+            return (
+              <Lesson
+                key={lesson.id}
+                title={lesson.title}
+                duration={lesson.duration}
+                onPlay={() => {
+                  dispatch(play([moduleIndex, lessonIndex]));
+                }}
+              />
+            );
+          })}
+        </nav>
+      </Collapsible.Content>
+    </Collapsible.Root>
   );
 }
