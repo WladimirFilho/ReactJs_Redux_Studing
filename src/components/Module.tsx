@@ -13,7 +13,11 @@ interface ModulesProps {
 }
 
 export function Module({ moduleIndex, title, amountOfLessons }: ModulesProps) {
-  // Redux state form player slice
+  const { currentLessonIndex, currentModuleIndex } = useAppSelector((state) => {
+    const { currentLessonIndex, currentModuleIndex } = state.player;
+    return { currentLessonIndex, currentModuleIndex };
+  });
+
   const lessons = useAppSelector((state) => {
     return state.player.course.module[moduleIndex].lessons;
   });
@@ -21,7 +25,7 @@ export function Module({ moduleIndex, title, amountOfLessons }: ModulesProps) {
   const dispatch = useDispatch();
 
   return (
-    <Collapsible.Root className="group">
+    <Collapsible.Root className="group" defaultOpen={moduleIndex === 0}>
       <Collapsible.Trigger className="flex w-full items-center gap-3 bg-zinc-800 p-4 hover:bg-zinc-700 ">
         <div className="flex h-10 w-10 rounded-full items-center justify-center bg-zinc-950 text-xs">
           {moduleIndex}
@@ -39,6 +43,9 @@ export function Module({ moduleIndex, title, amountOfLessons }: ModulesProps) {
       <Collapsible.Content>
         <nav className=" relative flex flex-col gap-4 p-6">
           {lessons.map((lesson, lessonIndex) => {
+            const isCurrent =
+              currentModuleIndex === moduleIndex &&
+              currentLessonIndex === lessonIndex;
             return (
               <Lesson
                 key={lesson.id}
@@ -47,6 +54,7 @@ export function Module({ moduleIndex, title, amountOfLessons }: ModulesProps) {
                 onPlay={() => {
                   dispatch(play([moduleIndex, lessonIndex]));
                 }}
+                isCurrent={isCurrent}
               />
             );
           })}
