@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ReactPlayer from "react-player";
-import { useAppSelector } from "../store";
 import { useDispatch } from "react-redux";
 import { next, useCurrentLesson } from "../store/slices/player";
 

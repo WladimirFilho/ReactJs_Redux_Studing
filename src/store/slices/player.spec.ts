@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, expect, it } from 'vitest'
-import {player as reducer, playerSlice, play, next} from './player'
+import {player as reducer, play, next} from './player'
 
 
 const exampleState = {
